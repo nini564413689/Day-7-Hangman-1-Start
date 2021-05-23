@@ -1,5 +1,6 @@
 #Step 1 
 import random
+from graph import stages
 
 def get_secret_letters(words = ["aardvark", "baboon", "camel"]):
     letters = str (random.choice(words))
@@ -23,6 +24,7 @@ def is_guess_the_words(letter, words):
             guessed_indexes.append(index)
     return guessed_indexes
 
+
 def get_new_words_with_blanks(guessed_indexes, words: str):
     words_with_blanks = ""
     for index in range(len(words)):
@@ -30,7 +32,6 @@ def get_new_words_with_blanks(guessed_indexes, words: str):
             words_with_blanks += words[index]
         else:
             words_with_blanks += "_"
-
     return words_with_blanks
 
 def is_all_blanks_filled(words: str):
@@ -49,32 +50,48 @@ def remaining_life(guessed_indexes, life):
 def is_run_out_of_life(life):
     return life == 0;
 
-# generate secret words
+
+life=7
+
 secret_words = get_secret_letters()
 print(secret_words)
-
-
 print_words_blanks(secret_words)
 
-# get user input
-user_input = get_input()
-print (user_input)
 
-guessed_indexes = is_guess_the_words(user_input, secret_words)
-print(guessed_indexes)
+game_is_over = False
+found_indexes = []
 
-found_guess = False
-if len(guessed_indexes) > 0:
-    found_guess = True
+while(game_is_over == False):
+    # get user input
+    user_input = get_input()
 
-print(found_guess)
+    guessed_indexes = is_guess_the_words(user_input, secret_words)
+    for index in range(len(guessed_indexes)):
+        current_value = guessed_indexes[index]
+        if current_value not in found_indexes:
+            found_indexes.append(current_value)
 
-# if found_guess is True:
-#     get_new_words_with_blanks()
+    print(guessed_indexes)
+
+    print('found indexes: ' + str(found_indexes))
+
+    found_guess = False
+    if len(guessed_indexes) > 0:
+        found_guess = True
+        print (" found, Game is not over")
+
+        new_words = get_new_words_with_blanks(found_indexes, secret_words)
+        print("you found: " +  new_words)
+        if is_all_blanks_filled(new_words) == True:
+            print ("Game Over")
+            game_is_over = True
+    else:
+        print ("not found, Game is not over")
+        life = remaining_life(guessed_indexes, life)
+        print("you have " + str(life) + " life")
+        print (stages[life])
+        if is_run_out_of_life(life):
+            print ("Game Over, out of life")
+            game_is_over = True
+
     
-print (get_new_words_with_blanks(guessed_indexes, "ascd"))
-
-# print(remaining_life(guessed_indexes, 6))
-
-# result = get_new_words_with_blanks([0,3], "abca")
-# print(result)
